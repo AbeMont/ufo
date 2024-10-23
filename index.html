@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css"></link>
+</head>
+<body>
+    <div class="container">
+        <img src="./flying-saucer.png" alt="" style="margin:auto">
+        <img id="ufo" src="./wunderwaffe-UFO.png" alt="UFO">
+    </div>
+
+    <div id="control-center">
+        <p>Click the "TakeOff" Button to launch the UFO.</p>
+        <p>Use your keyboard's arrows or the buttons below to navigate </p>
+        <button id="ufoOn">TakeOff</button>
+        <button id="ufoOff">Land</button>
+        <br/>
+        <div class="buttons">
+            <button id="moveUp">&#8593; </button>
+            <button id="moveDown">&#8595;</button>
+            <button id="moveLeft">&#8592;</button>
+            <button id="moveRight">&#8594;</button>
+        </div>
+        <audio id="ufo-turn-on" src="./sound/ufo-on.mp3"></audio>
+        <audio id="ufo-idle-sound" src="./sound/ufo-idle.mp3"></audio>
+        <audio id="ufo-turn-off" src="./sound/Ufo-land.mp3"></audio>
+
+        
+    </div>
+
+    <script>
+
+        var UFO = document.getElementById('ufo');
+        UFO.style.left = "50%";
+        UFO.style.bottom = "0%"
+
+        var onBtn = document.getElementById('ufoOn');
+        var offBtn = document.getElementById('ufoOff');
+        var moveUpBtn = document.getElementById('moveUp');
+        var moveDownBtn = document.getElementById('moveDown');
+        var moveLeftBtn = document.getElementById('moveLeft');
+        var moveRightBtn = document.getElementById('moveRight');
+
+        var turnOnSound = document.getElementById('ufo-turn-on');
+        var turnOffSound = document.getElementById('ufo-turn-off');
+        var turnIdleSound = document.getElementById('ufo-idle-sound');
+
+        var ufoOn = false;
+
+        var distanceCounters = {
+            moveUpCounter: 20,
+            moveDownCounter: 0,
+            moveRightPostionX: 50
+        }
+
+        var buttons = [moveUpBtn, moveDownBtn, moveLeftBtn, moveRightBtn];
+
+        function ufoState(){
+            
+            for(var i =0; i < buttons.length; i++){
+            
+                buttons[i].addEventListener('mousedown', function(){
+
+                    if(ufoOn){
+                        switch (this.id) {
+                            case 'moveUp' : moveUp(UFO);
+                            break;
+                            case 'moveDown' : moveDown(UFO);
+                            break; 
+                            case 'moveLeft' : moveLeft(UFO); 
+                            break;
+                            case 'moveRight' : moveRight(UFO);
+                            break;
+                        }
+                    }
+
+                });
+
+            }
+
+        }
+
+        onBtn.addEventListener('click', function(){
+
+            ufoOn = true;
+            UFO.style.bottom = "20%";
+            UFO.classList.add('ufo-on');
+            takeOffSound();
+            //turnIdleSoundOn(true);
+            ufoState();
+
+        });
+
+        offBtn.addEventListener('click', function(){
+
+            UFO.classList.remove('ufo-on');
+            ufoOn = false;
+            // Reset
+            distanceCounters.moveUpCounter = 20;
+            landingSound();
+            turnIdleSoundOn(false);
+            UFO.style.bottom = "0%";
+
+        });
+
+        // Movement Functions
+
+        function moveUp(el){
+            console.log("Moving Up");
+            distanceCounters.moveUpCounter += 5;
+            el.style.bottom = distanceCounters.moveUpCounter + '%';
+        }
+
+        function moveDown(el){
+            console.log("Moving Down");
+            distanceCounters.moveUpCounter -= 5;
+            el.style.bottom = distanceCounters.moveUpCounter + '%';
+        }
+
+        function moveRight(el){
+            console.log("Moving Right");
+            distanceCounters.moveRightPostionX += 2;
+            el.style.left = distanceCounters.moveRightPostionX + '%';
+        }
+
+        function moveLeft(el){
+            console.log("Moving Left");
+            distanceCounters.moveRightPostionX -= 2;
+            el.style.left = distanceCounters.moveRightPostionX + '%';
+        }
+
+        // Sounds
+        function takeOffSound(){
+            turnOnSound.play();
+        }
+
+        function landingSound(){
+            turnOffSound.play();
+        }
+
+        function turnIdleSoundOn(on){
+
+            if(on){
+                turnIdleSound.play();
+                turnIdleSound.loop = true;
+            } else {
+                turnIdleSound.pause();
+                turnIdleSound.currentTime = 0;
+            }
+            
+        }
+
+        // Key Events
+
+        document.addEventListener('keydown', logKey);
+
+        function logKey(e) {
+            console.log(e.code);
+            if(ufoOn){
+                switch (e.code) {
+                    case 'ArrowUp' : e.preventDefault(); moveUp(UFO);
+                    break;
+                    case 'ArrowDown' : e.preventDefault(); moveDown(UFO);
+                    break; 
+                    case 'ArrowLeft' : e.preventDefault(); moveLeft(UFO); 
+                    break;
+                    case 'ArrowRight' : e.preventDefault(); moveRight(UFO);
+                    break;
+                    case 'End' : e.preventDefault(); offBtn.click();
+                    break;
+                }              
+            }
+        }
+
+        // Object Test
+
+        var Tasks = {
+            DataController: function(){
+                return {
+                    firstName: "Abe",
+                    lastName: "Montoya",
+                    age: 30,
+                    agent: true
+                }
+            },
+            UIController: function(){},
+            TasksController: {
+                greet: function(){
+                    console.log(`Hello, my name is ${Tasks.DataController.firstName} ${Tasks.lastName}`);
+                } 
+            }
+        }
+
+        console.log(Tasks);
+        Tasks.TasksController.greet();
+
+    </script>
+
+    
+</body>
+</html>
